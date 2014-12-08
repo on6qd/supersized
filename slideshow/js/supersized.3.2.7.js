@@ -315,10 +315,12 @@
 					thisSlide = $(this);
 					var ratio = (thisSlide.data('origHeight')/thisSlide.data('origWidth')).toFixed(2);	// Define image ratio
 					
+                    base.$el.width($(window).width());
+                    base.$el.height($(window).height());
 					// Gather browser size
-					var browserwidth = base.$el.width(),
-						browserheight = base.$el.height(),
-						offset;
+                    var browserwidth = base.$el.width() - base.options.reduce_width;
+					var	browserheight = base.$el.height() - base.options.reduce_height;
+						
 					
 					/*-----Resize Image-----*/
 					if (base.options.fit_always){	// Fit always is enabled
@@ -430,12 +432,12 @@
 					
 					// Horizontally Center
 					if (base.options.horizontal_center){
-						$(this).css('left', (browserwidth - $(this).width())/2);
+						$(this).css('left', (browserwidth - $(this).width())/2 + base.options.offset_left);
 					}
 					
 					// Vertically Center
 					if (base.options.vertical_center){
-						$(this).css('top', (browserheight - $(this).height())/2);
+						$(this).css('top', (browserheight - $(this).height())/2+ base.options.offset_top);
 					}
 					
 				});
@@ -913,6 +915,10 @@
 		horizontal_center       :   1,			// Horizontally center background
 		vertical_center         :   1,			// Vertically center background
 		
+        reduce_width         	:   0,          
+        reduce_height        	:   0,
+        offset_left             :   0,
+        offset_top              :   0,
 												   
 		// Components							
 		slide_links				:	1,			// Individual links for each slide (Options: false, 'num', 'name', 'blank')
