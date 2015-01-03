@@ -18,16 +18,19 @@
     $.supersized = function(options){
     	
         if ($('#supersized').size() == 0) {
-            $('body').append('<div id="supersized-loader"></div><ul id="supersized"></ul>');
+            $('body').append('<div id="supersized-loader"></div><ul id="supersized" class="supersized"></ul>');
         }
 
     	/* Variables
 		----------------------------*/
     	var el = '#supersized',
+    		clones = '.supersized.clones',
         	base = this;
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
+        base.$clones = $(clones);
+        base.clones = clones;
         vars = $.supersized.vars;
         // Add a reverse reference to the DOM object
         base.$el.data("supersized", base);
@@ -96,6 +99,8 @@
 			}
 			
 			$(base.el).append(slideSet);
+			$(base.clones).append(slideSet);
+			
 			
 			// Add in thumbnails
 			if (base.options.thumbnail_navigation){
@@ -149,9 +154,15 @@
 					var imageLink = (base.options.slides[loadPrev].url) ? "href='" + base.options.slides[loadPrev].url + "'" : "";
 				
 					var imgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
-					var slidePrev = base.el+' li:eq('+loadPrev+')';
+
+					var slidePrev = base.el+' li.slide-'+loadPrev;
 					imgPrev.appendTo(slidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading prevslide');
-				
+					
+					
+					var cloneImgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
+					cloneSlidePrev = base.clones+' li.slide-'+loadPrev;
+					cloneImgPrev.appendTo(cloneSlidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('prevslide');
+					
 					imgPrev.load(function(){
 						$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
 						base.resizeNow();	// Resize background image
@@ -165,9 +176,12 @@
 			// Set current image
 			imageLink = (api.getField('url')) ? "href='" + api.getField('url') + "'" : "";
 			var img = $('<img src="'+api.getField('image')+'"/>');
-			
-			var slideCurrent= base.el+' li:eq('+vars.current_slide+')';
+			var slideCurrent= base.el+' li.slide-'+vars.current_slide;
 			img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
+			
+			var cloneImg = $('<img src="'+api.getField('image')+'"/>');
+			var cloneSlideCurrent= base.clones+' li.slide-'+vars.current_slide;
+			cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
 			
 			img.load(function(){
 				base._origDim($(this));
@@ -182,8 +196,13 @@
 				imageLink = (base.options.slides[loadNext].url) ? "href='" + base.options.slides[loadNext].url + "'" : "";
 				
 				var imgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
-				var slideNext = base.el+' li:eq('+loadNext+')';
+
+				var slideNext = base.el+' li.slide-'+loadNext;
 				imgNext.appendTo(slideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
+
+				var cloneImgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
+				var cloneSlideNext = base.clones+' li.slide-'+loadNext;
+				cloneImgNext.appendTo(cloneSlideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
 				
 				imgNext.load(function(){
 					$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -476,15 +495,15 @@
 		    clearInterval(vars.slideshow_interval);	// Stop slideshow
 		    
 		    var slides = base.options.slides,					// Pull in slides array
-				liveslide = base.$el.find('.activeslide');		// Find active slide
+				liveslide = $('.supersized .activeslide');		// Find active slide
 				$('.prevslide').removeClass('prevslide');
 				liveslide.removeClass('activeslide').addClass('prevslide');	// Remove active class & update previous slide
 					
 			// Get the slide number of new slide
 			vars.current_slide + 1 == base.options.slides.length ? vars.current_slide = 0 : vars.current_slide++;
 			
-		    var nextslide = $(base.el+' li:eq('+vars.current_slide+')'),
-		    	prevslide = base.$el.find('.prevslide');
+		    var nextslide = $('.supersized  li.slide-'+vars.current_slide),
+		    	prevslide = $('.supersized .prevslide');
 			
 			// If hybrid mode is on drop quality for transition
 			if (base.options.performance == 1) base.$el.removeClass('quality').addClass('speed');	
@@ -496,7 +515,7 @@
 
 			vars.current_slide == base.options.slides.length - 1 ? loadSlide = 0 : loadSlide = vars.current_slide + 1;	// Determine next slide
 
-			var targetList = base.el+' li:eq('+loadSlide+')';
+			var targetList = base.el+' li.slide-'+loadSlide;
 			if (!$(targetList).html()){
 				
 				// If links should open in new window
@@ -537,7 +556,8 @@
 			//Update slide markers
 			if (base.options.slide_links){
 				$('.current-slide').removeClass('current-slide');
-				$(vars.slide_list +'> li' ).eq(vars.current_slide).addClass('current-slide');
+				index = vars.current_slide;
+				$(vars.slide_list +'> li.slide-' + index ).addClass('current-slide');
 			}
 		    
 		    nextslide.css('visibility','hidden').addClass('activeslide');	// Update active slide
@@ -591,7 +611,7 @@
 			// Get current slide number
 			vars.current_slide == 0 ?  vars.current_slide = base.options.slides.length - 1 : vars.current_slide-- ;
 				
-		    var nextslide =  $(base.el+' li:eq('+vars.current_slide+')'),
+		    var nextslide =  $(base.el+' li.slide-'+vars.current_slide),
 		    	prevslide =  base.$el.find('.prevslide');
 			
 			// If hybrid mode is on drop quality for transition
@@ -602,7 +622,7 @@
 			
 			loadSlide = vars.current_slide;
 			
-			var targetList = base.el+' li:eq('+loadSlide+')';
+			var targetList = base.el+' li.slide-'+loadSlide;
 			if (!$(targetList).html()){
 				// If links should open in new window
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
@@ -639,7 +659,8 @@
 			//Update slide markers
 			if (base.options.slide_links){
 				$('.current-slide').removeClass('current-slide');
-				$(vars.slide_list +'> li' ).eq(vars.current_slide).addClass('current-slide');
+				index = vars.current_slide;
+				$(vars.slide_list +'> li.slide-'  + index ).addClass('current-slide');
 			}
 			
 		    nextslide.css('visibility','hidden').addClass('activeslide');	// Update active slide
@@ -757,7 +778,8 @@
 			// set active markers
 			if (base.options.slide_links){
 				$(vars.slide_list +'> .current-slide').removeClass('current-slide');
-				$(vars.slide_list +'> li').eq((totalSlides-targetSlide)).addClass('current-slide');
+				index = totalSlides-targetSlide;
+				$(vars.slide_list +'> li.slide-' + index ).addClass('current-slide');
 			}
 			
 			if (base.options.thumb_links){
@@ -781,7 +803,7 @@
 				
 				vars.current_slide == base.options.slides.length - 1 ? loadSlide = 0 : loadSlide = vars.current_slide + 1;	// Determine next slide
 				
-				var targetList = base.el+' li:eq('+loadSlide+')';
+				var targetList = base.el+' li.slide-'+loadSlide;
 				
 				if (!$(targetList).html()){
 					// If links should open in new window
@@ -804,7 +826,7 @@
 			
 				vars.current_slide - 1 < 0  ? loadSlide = base.options.slides.length - 1 : loadSlide = vars.current_slide - 1;	// Determine next slide
 				
-				var targetList = base.el+' li:eq('+loadSlide+')';
+				var targetList = base.el+' li.slide-' + loadSlide;
 				
 				if (!$(targetList).html()){
 					// If links should open in new window
@@ -847,7 +869,7 @@
 				vars.current_slide - 1 < 0  ? setPrev = base.options.slides.length - 1 : setPrev = vars.current_slide-1;
 				vars.update_images = false;
 				$('.prevslide').removeClass('prevslide');
-				$(base.el+' li:eq('+setPrev+')').addClass('prevslide');
+				$(base.el+' li.slide-'+setPrev).addClass('prevslide');
 			}
 			
 			vars.in_animation = false;
