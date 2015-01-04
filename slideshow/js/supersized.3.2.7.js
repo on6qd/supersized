@@ -329,6 +329,8 @@
 			
 			return base.$el.each(function() {
 		  		//  Resize each image seperately
+				var metrics=[];
+				var slideCounter = 0;
 		  		$('img', base.el).each(function(){
 		  			
 					thisSlide = $(this);
@@ -462,12 +464,21 @@
 						$(this).css('top', (browserheight - $(this).height())/2+ base.options.offset_top);
 					}
 					
-					if(typeof supersizedResizeCallback == 'function'){
-					       supersizedResizeCallback.call(this);
-					}
 					
-					
+					var slideMetrics = []
+					slideMetrics.height = thisSlide.height();
+					slideMetrics.width = thisSlide.width();
+					slideMetrics.left = parseInt(thisSlide.css('left'),10);
+					slideMetrics.top = parseInt(thisSlide.css('top'));
+
+					metrics[slideCounter]=slideMetrics;
+					++slideCounter;
+
 				});
+
+                if(typeof supersizedResizeCallback == 'function'){
+                      supersizedResizeCallback.call(undefined,metrics);
+                }
 				
 				// Basic image drag and right click protection
 				if (base.options.image_protect){
@@ -477,7 +488,6 @@
 					});
 				
 				}
-				
 				return false;
 				
 			});
@@ -523,9 +533,13 @@
 				
 				imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				
 				img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
 				
+				var cloneImg = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
+				var cloneSlideCurrent= base.clones+' li.slide-'+loadSlide;
+				cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');;
+
+
 				img.load(function(){
 					base._origDim($(this));
 					base.resizeNow();
@@ -628,7 +642,6 @@
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 				imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				
 				img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
 				
 				img.load(function(){
