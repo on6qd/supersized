@@ -326,11 +326,11 @@
         /* Resize Images
 		----------------------------*/
 		base.resizeNow = function(){
+			var metrics=[];
+			var slideCounter = 0;
 			
-			return base.$el.each(function() {
+			base.$el.each(function() {
 		  		//  Resize each image seperately
-				var metrics=[];
-				var slideCounter = 0;
 		  		$('img', base.el).each(function(){
 		  			
 					thisSlide = $(this);
@@ -476,9 +476,6 @@
 
 				});
 
-                if(typeof supersizedResizeCallback == 'function'){
-                      supersizedResizeCallback.call(undefined,metrics);
-                }
 				
 				// Basic image drag and right click protection
 				if (base.options.image_protect){
@@ -491,6 +488,11 @@
 				return false;
 				
 			});
+			
+            if(typeof supersizedResizeCallback == 'function'){
+                  supersizedResizeCallback.call(undefined,metrics);
+            }
+			
 			
 		};
         
