@@ -204,7 +204,7 @@
 				imgNext.appendTo(slideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
 
 				if (typeof base.options.slides[loadNext].imageCloned !== "undefined") {
-					var cloneImgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
+					var cloneImgNext = $('<img src="'+base.options.slides[loadNext].imageCloned+'"/>');
 					var cloneSlideNext = base.clones+' li.slide-'+loadNext;
 					cloneImgNext.appendTo(cloneSlideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
 				}
@@ -543,7 +543,7 @@
 				img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
 				
 				if (typeof base.options.slides[loadSlide].imageCloned !== "undefined") {
-					var cloneImg = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
+					var cloneImg = $('<img src="'+base.options.slides[loadSlide].imageCloned+'"/>'); 
 					var cloneSlideCurrent= base.clones+' li.slide-'+loadSlide;
 					cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');;
 				}
