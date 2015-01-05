@@ -158,11 +158,12 @@
 					var slidePrev = base.el+' li.slide-'+loadPrev;
 					imgPrev.appendTo(slidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading prevslide');
 					
-					
-					var cloneImgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
-					cloneSlidePrev = base.clones+' li.slide-'+loadPrev;
-					cloneImgPrev.appendTo(cloneSlidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('prevslide');
-					
+					if (typeof base.options.slides[loadPrev].imageCloned !== "undefined") {
+						var cloneImgPrev = $('<img src="'+base.options.slides[loadPrev].imageCloned+'"/>');
+						cloneSlidePrev = base.clones+' li.slide-'+loadPrev;
+						cloneImgPrev.appendTo(cloneSlidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('prevslide');
+					}
+
 					imgPrev.load(function(){
 						$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
 						base.resizeNow();	// Resize background image
@@ -179,9 +180,11 @@
 			var slideCurrent= base.el+' li.slide-'+vars.current_slide;
 			img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
 			
-			var cloneImg = $('<img src="'+api.getField('image')+'"/>');
-			var cloneSlideCurrent= base.clones+' li.slide-'+vars.current_slide;
-			cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
+			if (typeof base.options.slides[vars.current_slide].imageCloned !== "undefined") {
+				var cloneImg = $('<img src="'+api.getField('imageCloned')+'"/>');
+				var cloneSlideCurrent= base.clones+' li.slide-'+vars.current_slide;
+				cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
+			}
 			
 			img.load(function(){
 				base._origDim($(this));
@@ -200,9 +203,11 @@
 				var slideNext = base.el+' li.slide-'+loadNext;
 				imgNext.appendTo(slideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
 
-				var cloneImgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
-				var cloneSlideNext = base.clones+' li.slide-'+loadNext;
-				cloneImgNext.appendTo(cloneSlideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
+				if (typeof base.options.slides[loadNext].imageCloned !== "undefined") {
+					var cloneImgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
+					var cloneSlideNext = base.clones+' li.slide-'+loadNext;
+					cloneImgNext.appendTo(cloneSlideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
+				}
 				
 				imgNext.load(function(){
 					$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -537,10 +542,11 @@
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
 				img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
 				
-				var cloneImg = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				var cloneSlideCurrent= base.clones+' li.slide-'+loadSlide;
-				cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');;
-
+				if (typeof base.options.slides[loadSlide].imageCloned !== "undefined") {
+					var cloneImg = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
+					var cloneSlideCurrent= base.clones+' li.slide-'+loadSlide;
+					cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');;
+				}
 
 				img.load(function(){
 					base._origDim($(this));
