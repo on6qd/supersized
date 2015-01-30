@@ -16,24 +16,21 @@
 	----------------------------*/
     
     $.supersized = function(options){
-
-
-        $.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
-        $.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
-
-
-	    if ($('#supersized').size() == 0) {
-	        $('body').append($.supersized.vars.options.DOM_element);
-	    }
     	
+        if ($('#supersized').size() == 0) {
+            $('body').append('<div id="supersized-loader"></div><ul id="supersized" class="supersized"></ul>');
+        }
 
     	/* Variables
 		----------------------------*/
     	var el = '#supersized',
+    		clones = '.supersized.clones',
         	base = this;
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
+        base.$clones = $(clones);
+        base.clones = clones;
         vars = $.supersized.vars;
         // Add a reverse reference to the DOM object
         base.$el.data("supersized", base);
@@ -41,12 +38,13 @@
 		
 		base.init = function(){
         	// Combine options and vars
+        	$.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
+        	$.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
             base.options = $.supersized.vars.options;
+            
             base._build();
         };
         
-
-
         
         /* Build Elements
 		----------------------------*/
@@ -101,6 +99,8 @@
 			}
 			
 			$(base.el).append(slideSet);
+			$(base.clones).append(slideSet);
+			
 			
 			// Add in thumbnails
 			if (base.options.thumbnail_navigation){
@@ -154,9 +154,16 @@
 					var imageLink = (base.options.slides[loadPrev].url) ? "href='" + base.options.slides[loadPrev].url + "'" : "";
 				
 					var imgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
-					var slidePrev = base.el+' li:eq('+loadPrev+')';
+
+					var slidePrev = base.el+' li.slide-'+loadPrev;
 					imgPrev.appendTo(slidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading prevslide');
-				
+					
+					if (typeof base.options.slides[loadPrev].imageCloned !== "undefined") {
+						var cloneImgPrev = $('<img src="'+base.options.slides[loadPrev].imageCloned+'"/>');
+						cloneSlidePrev = base.clones+' li.slide-'+loadPrev;
+						cloneImgPrev.appendTo(cloneSlidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('prevslide');
+					}
+
 					imgPrev.load(function(){
 						$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
 						base.resizeNow();	// Resize background image
@@ -170,9 +177,14 @@
 			// Set current image
 			imageLink = (api.getField('url')) ? "href='" + api.getField('url') + "'" : "";
 			var img = $('<img src="'+api.getField('image')+'"/>');
-			
-			var slideCurrent= base.el+' li:eq('+vars.current_slide+')';
+			var slideCurrent= base.el+' li.slide-'+vars.current_slide;
 			img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
+			
+			if (typeof base.options.slides[vars.current_slide].imageCloned !== "undefined") {
+				var cloneImg = $('<img src="'+api.getField('imageCloned')+'"/>');
+				var cloneSlideCurrent= base.clones+' li.slide-'+vars.current_slide;
+				cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
+			}
 			
 			img.load(function(){
 				base._origDim($(this));
@@ -187,8 +199,15 @@
 				imageLink = (base.options.slides[loadNext].url) ? "href='" + base.options.slides[loadNext].url + "'" : "";
 				
 				var imgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
-				var slideNext = base.el+' li:eq('+loadNext+')';
+
+				var slideNext = base.el+' li.slide-'+loadNext;
 				imgNext.appendTo(slideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
+
+				if (typeof base.options.slides[loadNext].imageCloned !== "undefined") {
+					var cloneImgNext = $('<img src="'+base.options.slides[loadNext].imageCloned+'"/>');
+					var cloneSlideNext = base.clones+' li.slide-'+loadNext;
+					cloneImgNext.appendTo(cloneSlideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
+				}
 				
 				imgNext.load(function(){
 					$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -312,8 +331,10 @@
         /* Resize Images
 		----------------------------*/
 		base.resizeNow = function(){
+			var metrics=[];
+			var slideCounter = 0;
 			
-			return base.$el.each(function() {
+			base.$el.each(function() {
 		  		//  Resize each image seperately
 		  		$('img', base.el).each(function(){
 		  			
@@ -430,6 +451,9 @@
 					};
 					
 					/*-----End Resize Functions-----*/
+
+
+					/*-----End Resize Functions-----*/
 					
 					if (thisSlide.parents('li').hasClass('image-loading')){
 						$('.image-loading').removeClass('image-loading');
@@ -445,7 +469,18 @@
 						$(this).css('top', (browserheight - $(this).height())/2+ base.options.offset_top);
 					}
 					
+					
+					var slideMetrics = []
+					slideMetrics.height = thisSlide.height();
+					slideMetrics.width = thisSlide.width();
+					slideMetrics.left = parseInt(thisSlide.css('left'),10);
+					slideMetrics.top = parseInt(thisSlide.css('top'));
+
+					metrics[slideCounter]=slideMetrics;
+					++slideCounter;
+
 				});
+
 				
 				// Basic image drag and right click protection
 				if (base.options.image_protect){
@@ -455,10 +490,14 @@
 					});
 				
 				}
-				
 				return false;
 				
 			});
+			
+            if(typeof supersizedResizeCallback == 'function'){
+                  supersizedResizeCallback.call(undefined,metrics);
+            }
+			
 			
 		};
         
@@ -473,15 +512,15 @@
 		    clearInterval(vars.slideshow_interval);	// Stop slideshow
 		    
 		    var slides = base.options.slides,					// Pull in slides array
-				liveslide = base.$el.find('.activeslide');		// Find active slide
+				liveslide = $('.supersized .activeslide');		// Find active slide
 				$('.prevslide').removeClass('prevslide');
 				liveslide.removeClass('activeslide').addClass('prevslide');	// Remove active class & update previous slide
 					
 			// Get the slide number of new slide
 			vars.current_slide + 1 == base.options.slides.length ? vars.current_slide = 0 : vars.current_slide++;
 			
-		    var nextslide = $(base.el+' li:eq('+vars.current_slide+')'),
-		    	prevslide = base.$el.find('.prevslide');
+		    var nextslide = $('.supersized  li.slide-'+vars.current_slide),
+		    	prevslide = $('.supersized .prevslide');
 			
 			// If hybrid mode is on drop quality for transition
 			if (base.options.performance == 1) base.$el.removeClass('quality').addClass('speed');	
@@ -493,7 +532,7 @@
 
 			vars.current_slide == base.options.slides.length - 1 ? loadSlide = 0 : loadSlide = vars.current_slide + 1;	// Determine next slide
 
-			var targetList = base.el+' li:eq('+loadSlide+')';
+			var targetList = base.el+' li.slide-'+loadSlide;
 			if (!$(targetList).html()){
 				
 				// If links should open in new window
@@ -501,9 +540,14 @@
 				
 				imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				
 				img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
 				
+				if (typeof base.options.slides[loadSlide].imageCloned !== "undefined") {
+					var cloneImg = $('<img src="'+base.options.slides[loadSlide].imageCloned+'"/>'); 
+					var cloneSlideCurrent= base.clones+' li.slide-'+loadSlide;
+					cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');;
+				}
+
 				img.load(function(){
 					base._origDim($(this));
 					base.resizeNow();
@@ -534,7 +578,8 @@
 			//Update slide markers
 			if (base.options.slide_links){
 				$('.current-slide').removeClass('current-slide');
-				$(vars.slide_list +'> li' ).eq(vars.current_slide).addClass('current-slide');
+				index = vars.current_slide;
+				$(vars.slide_list +'> li.slide-' + index ).addClass('current-slide');
 			}
 		    
 		    nextslide.css('visibility','hidden').addClass('activeslide');	// Update active slide
@@ -588,7 +633,7 @@
 			// Get current slide number
 			vars.current_slide == 0 ?  vars.current_slide = base.options.slides.length - 1 : vars.current_slide-- ;
 				
-		    var nextslide =  $(base.el+' li:eq('+vars.current_slide+')'),
+		    var nextslide =  $(base.el+' li.slide-'+vars.current_slide),
 		    	prevslide =  base.$el.find('.prevslide');
 			
 			// If hybrid mode is on drop quality for transition
@@ -599,13 +644,12 @@
 			
 			loadSlide = vars.current_slide;
 			
-			var targetList = base.el+' li:eq('+loadSlide+')';
+			var targetList = base.el+' li.slide-'+loadSlide;
 			if (!$(targetList).html()){
 				// If links should open in new window
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 				imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				
 				img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
 				
 				img.load(function(){
@@ -636,7 +680,8 @@
 			//Update slide markers
 			if (base.options.slide_links){
 				$('.current-slide').removeClass('current-slide');
-				$(vars.slide_list +'> li' ).eq(vars.current_slide).addClass('current-slide');
+				index = vars.current_slide;
+				$(vars.slide_list +'> li.slide-'  + index ).addClass('current-slide');
 			}
 			
 		    nextslide.css('visibility','hidden').addClass('activeslide');	// Update active slide
@@ -754,7 +799,8 @@
 			// set active markers
 			if (base.options.slide_links){
 				$(vars.slide_list +'> .current-slide').removeClass('current-slide');
-				$(vars.slide_list +'> li').eq((totalSlides-targetSlide)).addClass('current-slide');
+				index = totalSlides-targetSlide;
+				$(vars.slide_list +'> li.slide-' + index ).addClass('current-slide');
 			}
 			
 			if (base.options.thumb_links){
@@ -778,7 +824,7 @@
 				
 				vars.current_slide == base.options.slides.length - 1 ? loadSlide = 0 : loadSlide = vars.current_slide + 1;	// Determine next slide
 				
-				var targetList = base.el+' li:eq('+loadSlide+')';
+				var targetList = base.el+' li.slide-'+loadSlide;
 				
 				if (!$(targetList).html()){
 					// If links should open in new window
@@ -801,7 +847,7 @@
 			
 				vars.current_slide - 1 < 0  ? loadSlide = base.options.slides.length - 1 : loadSlide = vars.current_slide - 1;	// Determine next slide
 				
-				var targetList = base.el+' li:eq('+loadSlide+')';
+				var targetList = base.el+' li.slide-' + loadSlide;
 				
 				if (!$(targetList).html()){
 					// If links should open in new window
@@ -844,7 +890,7 @@
 				vars.current_slide - 1 < 0  ? setPrev = base.options.slides.length - 1 : setPrev = vars.current_slide-1;
 				vars.update_images = false;
 				$('.prevslide').removeClass('prevslide');
-				$(base.el+' li:eq('+setPrev+')').addClass('prevslide');
+				$(base.el+' li.slide-'+setPrev).addClass('prevslide');
 			}
 			
 			vars.in_animation = false;
@@ -924,14 +970,15 @@
         reduce_height        	:   0,
         offset_left             :   0,
         offset_top              :   0,
-		DOM_element				:	'<div id="supersized-loader"></div><ul id="supersized"></ul>',
 												   
 		// Components							
 		slide_links				:	1,			// Individual links for each slide (Options: false, 'num', 'name', 'blank')
 		thumb_links				:	1,			// Individual thumb links for each slide
-		thumbnail_navigation    :   0			// Thumbnail navigation
+		thumbnail_navigation    :   0,			// Thumbnail navigation
     	
-    };
+
+	
+	};
     
     $.fn.supersized = function(options){
         return this.each(function(){

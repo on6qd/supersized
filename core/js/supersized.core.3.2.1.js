@@ -108,8 +108,8 @@
 					var ratio = (thisSlide.data('origHeight')/thisSlide.data('origWidth')).toFixed(2);	// Define image ratio
 					
 					// Gather browser size
-					var browserwidth = base.$el.width(),
-						browserheight = base.$el.height(),
+					var browserwidth = $('#supersized').width(),
+						browserheight = $('#supersized').height(),
 						offset;
 					
 					/*-----Resize Image-----*/
