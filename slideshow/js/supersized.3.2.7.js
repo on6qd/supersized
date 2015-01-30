@@ -16,10 +16,16 @@
 	----------------------------*/
     
     $.supersized = function(options){
+
+
+        $.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
+        $.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
+
+
+	    if ($('#supersized').size() == 0) {
+	        $('body').append($.supersized.vars.options.DOM_element);
+	    }
     	
-        if ($('#supersized').size() == 0) {
-            $('body').append('<div id="supersized-loader"></div><ul id="supersized"></ul>');
-        }
 
     	/* Variables
 		----------------------------*/
@@ -35,13 +41,12 @@
 		
 		base.init = function(){
         	// Combine options and vars
-        	$.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
-        	$.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
             base.options = $.supersized.vars.options;
-            
             base._build();
         };
         
+
+
         
         /* Build Elements
 		----------------------------*/
@@ -919,6 +924,7 @@
         reduce_height        	:   0,
         offset_left             :   0,
         offset_top              :   0,
+		DOM_element				:	'<div id="supersized-loader"></div><ul id="supersized"></ul>',
 												   
 		// Components							
 		slide_links				:	1,			// Individual links for each slide (Options: false, 'num', 'name', 'blank')
