@@ -15,10 +15,15 @@
 	/* Place Supersized Elements
 	----------------------------*/
     
+
     $.supersized = function(options){
     	
+        // Combine options and vars
+        $.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
+        $.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
+
         if ($('#supersized').size() == 0) {
-            $('body').append('<div id="supersized-loader"></div><ul id="supersized" class="supersized"></ul>');
+            $('body').append($.supersized.vars.options.DOM_element);
         }
 
     	/* Variables
@@ -37,9 +42,6 @@
         api = base.$el.data('supersized');
 		
 		base.init = function(){
-        	// Combine options and vars
-        	$.supersized.vars = $.extend($.supersized.vars, $.supersized.themeVars);
-        	$.supersized.vars.options = $.extend({},$.supersized.defaultOptions, $.supersized.themeOptions, options);
             base.options = $.supersized.vars.options;
             
             base._build();
@@ -941,7 +943,9 @@
 	/* Default Options
 	----------------------------*/
 	$.supersized.defaultOptions = {
-    
+
+	   	DOM_element				: '<div id="supersized-loader"></div><ul id="supersized" class="supersized"></ul>',
+
     	// Functionality
 		slideshow               :   1,			// Slideshow on/off
 		autoplay				:	1,			// Slideshow starts playing automatically
