@@ -366,8 +366,8 @@
 					thisSlide = $(this);
 					var ratio = (thisSlide.data('origHeight')/thisSlide.data('origWidth')).toFixed(2);	// Define image ratio
 					
-                    base.$el.width($(window).width());
-                    base.$el.height($(window).height());
+                    base.$el.width($(base.options.parentcontainer).width());
+                    base.$el.height($(base.options.parentcontainer).height());
 					// Gather browser size
                     var browserwidth = base.$el.width() - base.options.reduce_width;
 					var	browserheight = base.$el.height() - base.options.reduce_height;
@@ -986,6 +986,7 @@
 	----------------------------*/
 	$.supersized.defaultOptions = {
 
+	   	parentcontainer			: window,
 	   	DOM_element				: '<div id="supersized-loader"></div><ul id="supersized" class="supersized"></ul>',
 
     	// Functionality
