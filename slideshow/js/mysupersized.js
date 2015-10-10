@@ -29,13 +29,10 @@
     	/* Variables
 		----------------------------*/
     	var el = '#supersized',
-    		clones = '.supersized.clones',
         	base = this;
         // Access to jQuery and DOM versions of element
         base.$el = $(el);
         base.el = el;
-        base.$clones = $(clones);
-        base.clones = clones;
         vars = $.supersized.vars;
         // Add a reverse reference to the DOM object
         base.$el.data("supersized", base);
@@ -101,8 +98,7 @@
 			}
 			
 			$(base.el).append(slideSet);
-			$(base.clones).append(slideSet);
-			
+	
 			
 			// Add in thumbnails
 			if (base.options.thumbnail_navigation){
@@ -163,16 +159,6 @@
 					} else {
 						imgPrev.appendTo(slidePrev).parent().addClass('image-loading prevslide');
 					}
-					
-					if (typeof base.options.slides[loadPrev].imageCloned !== "undefined") {
-						var cloneImgPrev = $('<img src="'+base.options.slides[loadPrev].imageCloned+'"/>');
-						cloneSlidePrev = base.clones+' li.slide-'+loadPrev;
-						if (imageLink){
-							cloneImgPrev.appendTo(cloneSlidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('prevslide');
-						} else {
-							cloneImgPrev.appendTo(cloneSlidePrev).parent().addClass('prevslide');
-						}
-					}
 
 					imgPrev.load(function(){
 						$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -194,15 +180,6 @@
 				img.appendTo(slideCurrent).parent().addClass('image-loading activeslide');
 			}
 			
-			if (typeof base.options.slides[vars.current_slide].imageCloned !== "undefined") {
-				var cloneImg = $('<img src="'+api.getField('imageCloned')+'"/>');
-				var cloneSlideCurrent= base.clones+' li.slide-'+vars.current_slide;
-				if (imageLink){
-					cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
-				} else {
-					cloneImg.appendTo(cloneSlideCurrent).parent().addClass('image-loading activeslide');
-				} 
-			}
 			
 			img.load(function(){
 				base._origDim($(this));
@@ -224,15 +201,6 @@
 				} else {
 					imgNext.appendTo(slideNext).parent().addClass('image-loading');
 				} 
-				if (typeof base.options.slides[loadNext].imageCloned !== "undefined") {
-					var cloneImgNext = $('<img src="'+base.options.slides[loadNext].imageCloned+'"/>');
-					var cloneSlideNext = base.clones+' li.slide-'+loadNext;
-					if (imageLink){
-						cloneImgNext.appendTo(cloneSlideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
-					} else {
-						cloneImgNext.appendTo(cloneSlideNext).parent().addClass('image-loading');
-					}
-				}
 				
 				imgNext.load(function(){
 					$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -495,14 +463,6 @@
 					}
 					
 					
-					var slideMetrics = []
-					slideMetrics.height = thisSlide.height();
-					slideMetrics.width = thisSlide.width();
-					slideMetrics.left = parseInt(thisSlide.css('left'),10);
-					slideMetrics.top = parseInt(thisSlide.css('top'));
-
-					metrics[slideCounter]=slideMetrics;
-					++slideCounter;
 
 				});
 
@@ -519,9 +479,6 @@
 				
 			});
 			
-            if(typeof supersizedResizeCallback == 'function'){
-                  supersizedResizeCallback.call(undefined,metrics);
-            }
 			
 			
 		};
@@ -571,16 +528,6 @@
 					img.appendTo(targetList).parent().addClass('image-loading').css('visibility','hidden');
 				}
 				
-				if (typeof base.options.slides[loadSlide].imageCloned !== "undefined") {
-					var cloneImg = $('<img src="'+base.options.slides[loadSlide].imageCloned+'"/>'); 
-					var cloneSlideCurrent= base.clones+' li.slide-'+loadSlide;
-					if (imageLink) {
-						cloneImg.appendTo(cloneSlideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
-					} else {
-						cloneImg.appendTo(cloneSlideCurrent).parent().addClass('image-loading').css('visibility','hidden');
-					}
-				}
-
 				img.load(function(){
 					base._origDim($(this));
 					base.resizeNow();
