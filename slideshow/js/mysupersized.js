@@ -154,11 +154,11 @@
 					var imgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
 					var slidePrev = base.el+' li.slide-'+loadPrev;
 					if (imageLink){
-						img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>');
+						imgPrev.appendTo(slidePrev).wrap('<a ' + imageLink + linkTarget + '></a>');
 					} else {
-						img.appendTo(slideCurrent);
+						imgPrev.appendTo(slidePrev);
 					}
-					img.parent().prepend(imageLabel);
+					imgPrev.parent().prepend(imageLabel);
 					$(slidePrev).addClass('image-loading prevslide');
 
 					imgPrev.load(function(){
@@ -195,17 +195,17 @@
 			if (base.options.slides.length > 1){
 				// Set next image
 				vars.current_slide == base.options.slides.length - 1 ? loadNext = 0 : loadNext = vars.current_slide + 1;	// If slide is last, load first slide as next
-				imageLink = (base.options.slides[loadNext].url) ? "href='" + base.options.slides[loadNext].url + "'" : "";
-				
+				var imageLink = (base.options.slides[loadNext].url) ? "href='" + base.options.slides[loadNext].url + "'" : "";
+				var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 				var imgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
-
 				var slideNext = base.el+' li.slide-'+loadNext;
-				if (imageLink){
-					imgNext.appendTo(slideNext).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading');
+				if (imageLink) {
+					imgNext.appendTo(slideNext).wrap('<a ' + imageLink + linkTarget + '></a>');
 				} else {
-					imgNext.appendTo(slideNext).parent().addClass('image-loading');
-				} 
-				
+					imgNext.appendTo(slideNext);
+				}
+				imgNext.parent().prepend(imageLabel);
+				$(slideNext).addClass('image-loading');
 				imgNext.load(function(){
 					$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
 					base.resizeNow();	// Resize background image
@@ -524,14 +524,16 @@
 				// If links should open in new window
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 				
-				imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+				var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+			    var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				if (imageLink) {
-					img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
+				if (imageLink){
+					img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
 				} else {
-					img.appendTo(targetList).parent().addClass('image-loading').css('visibility','hidden');
+					img.appendTo(targetList);
 				}
-				
+				img.parent().prepend(imageLabel);
+				$(targetList).addClass('image-loading').css('visibility','hidden');
 				img.load(function(){
 					base._origDim($(this));
 					base.resizeNow();
@@ -632,14 +634,17 @@
 			if (!$(targetList).html()){
 				// If links should open in new window
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
-				imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+				var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+				var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-				if (imageLink) {
-					img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
-				} else  {
-					img.appendTo(targetList).parent().addClass('image-loading').css('visibility','hidden');
+				if (imageLink){
+					img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
+				} else {
+					img.appendTo(targetList);
 				}
-				
+				img.parent().prepend(imageLabel);
+				$(targetList).addClass('image-loading').css('visibility','hidden');
+			
 				img.load(function(){
 					base._origDim($(this));
 					base.resizeNow();
@@ -818,13 +823,16 @@
 					// If links should open in new window
 					var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 					
-					imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+					var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+					var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 					var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
-					if (imageLink) {
-						img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
-					} else  {
-						img.appendTo(targetList).parent().addClass('image-loading').css('visibility','hidden');
+					if (imageLink){
+						img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
+					} else {
+						img.appendTo(targetList);
 					}
+					img.parent().prepend(imageLabel);
+					$(targetList).addClass('image-loading').css('visibility','hidden');
 					
 					img.load(function(){
 						base._origDim($(this));
@@ -844,14 +852,17 @@
 					// If links should open in new window
 					var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 					
-					imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+					var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
+					var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 					var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
 					
-					if (imageLink) {
-						img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading').css('visibility','hidden');
+					if (imageLink){
+						img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
 					} else {
-						img.appendTo(targetList).parent().addClass('image-loading').css('visibility','hidden');
+						img.appendTo(targetList);
 					}
+					img.parent().prepend(imageLabel);
+					$(targetList).addClass('image-loading').css('visibility','hidden');
 					
 					img.load(function(){
 						base._origDim($(this));
