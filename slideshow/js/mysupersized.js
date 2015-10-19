@@ -150,15 +150,16 @@
 					// Set previous image
 					vars.current_slide - 1 < 0  ? loadPrev = base.options.slides.length - 1 : loadPrev = vars.current_slide - 1;	// If slide is 1, load last slide as previous
 					var imageLink = (base.options.slides[loadPrev].url) ? "href='" + base.options.slides[loadPrev].url + "'" : "";
-				
+					var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 					var imgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
-
 					var slidePrev = base.el+' li.slide-'+loadPrev;
 					if (imageLink){
-						imgPrev.appendTo(slidePrev).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading prevslide');
+						img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>');
 					} else {
-						imgPrev.appendTo(slidePrev).parent().addClass('image-loading prevslide');
+						img.appendTo(slideCurrent);
 					}
+					img.parent().prepend(imageLabel);
+					$(slidePrev).addClass('image-loading prevslide');
 
 					imgPrev.load(function(){
 						$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -171,14 +172,17 @@
 			}
 			
 			// Set current image
-			imageLink = (api.getField('url')) ? "href='" + api.getField('url') + "'" : "";
+			var imageLink = (api.getField('url')) ? "href='" + api.getField('url') + "'" : "";
+			var imageLabel = (api.getField('label')) ? api.getField('label'): "";
 			var img = $('<img src="'+api.getField('image')+'"/>');
 			var slideCurrent= base.el+' li.slide-'+vars.current_slide;
 			if (imageLink){
-				img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>').parent().parent().addClass('image-loading activeslide');
+				img.appendTo(slideCurrent).wrap('<a ' + imageLink + linkTarget + '></a>');
 			} else {
-				img.appendTo(slideCurrent).parent().addClass('image-loading activeslide');
+				img.appendTo(slideCurrent);
 			}
+			img.parent().prepend(imageLabel);
+			$(slideCurrent).addClass('image-loading activeslide');
 			
 			
 			img.load(function(){
