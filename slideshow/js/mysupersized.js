@@ -150,7 +150,7 @@
 					// Set previous image
 					vars.current_slide - 1 < 0  ? loadPrev = base.options.slides.length - 1 : loadPrev = vars.current_slide - 1;	// If slide is 1, load last slide as previous
 					var imageLink = (base.options.slides[loadPrev].url) ? "href='" + base.options.slides[loadPrev].url + "'" : "";
-					var imageLabel = (api.getField('label')) ? api.getField('label'): "";
+					var imageLabel = (base.options.slides[loadPrev].label) ? base.options.slides[loadPrev].label : "";
 					var imgPrev = $('<img src="'+base.options.slides[loadPrev].image+'"/>');
 					var slidePrev = base.el+' li.slide-'+loadPrev;
 					if (imageLink){
@@ -158,7 +158,7 @@
 					} else {
 						imgPrev.appendTo(slidePrev);
 					}
-					imgPrev.parent().prepend(imageLabel);
+					imgPrev.parent().append(imageLabel);
 					$(slidePrev).addClass('image-loading prevslide');
 
 					imgPrev.load(function(){
@@ -181,7 +181,7 @@
 			} else {
 				img.appendTo(slideCurrent);
 			}
-			img.parent().prepend(imageLabel);
+			img.parent().append(imageLabel);
 			$(slideCurrent).addClass('image-loading activeslide');
 			
 			
@@ -196,7 +196,7 @@
 				// Set next image
 				vars.current_slide == base.options.slides.length - 1 ? loadNext = 0 : loadNext = vars.current_slide + 1;	// If slide is last, load first slide as next
 				var imageLink = (base.options.slides[loadNext].url) ? "href='" + base.options.slides[loadNext].url + "'" : "";
-				var imageLabel = (api.getField('label')) ? api.getField('label'): "";
+				var imageLabel = (base.options.slides[loadNext].label) ? base.options.slides[loadNext].label : "";
 				var imgNext = $('<img src="'+base.options.slides[loadNext].image+'"/>');
 				var slideNext = base.el+' li.slide-'+loadNext;
 				if (imageLink) {
@@ -204,7 +204,7 @@
 				} else {
 					imgNext.appendTo(slideNext);
 				}
-				imgNext.parent().prepend(imageLabel);
+				imgNext.parent().append(imageLabel);
 				$(slideNext).addClass('image-loading');
 				imgNext.load(function(){
 					$(this).data('origWidth', $(this).width()).data('origHeight', $(this).height());
@@ -525,14 +525,14 @@
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 				
 				var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
-			    var imageLabel = (api.getField('label')) ? api.getField('label'): "";
+			    var imageLabel = (base.options.slides[loadSlide].label) ? base.options.slides[loadSlide].label : "";
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
 				if (imageLink){
 					img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
 				} else {
 					img.appendTo(targetList);
 				}
-				img.parent().prepend(imageLabel);
+				img.parent().append(imageLabel);
 				$(targetList).addClass('image-loading').css('visibility','hidden');
 				img.load(function(){
 					base._origDim($(this));
@@ -635,14 +635,14 @@
 				// If links should open in new window
 				var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 				var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
-				var imageLabel = (api.getField('label')) ? api.getField('label'): "";
+			    var imageLabel = (base.options.slides[loadSlide].label) ? base.options.slides[loadSlide].label : "";
 				var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
 				if (imageLink){
 					img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
 				} else {
 					img.appendTo(targetList);
 				}
-				img.parent().prepend(imageLabel);
+				img.parent().append(imageLabel);
 				$(targetList).addClass('image-loading').css('visibility','hidden');
 			
 				img.load(function(){
@@ -824,14 +824,14 @@
 					var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 					
 					var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
-					var imageLabel = (api.getField('label')) ? api.getField('label'): "";
+			    	var imageLabel = (base.options.slides[loadSlide].label) ? base.options.slides[loadSlide].label : "";
 					var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
 					if (imageLink){
 						img.appendTo(targetList).wrap('<a ' + imageLink + linkTarget + '></a>');
 					} else {
 						img.appendTo(targetList);
 					}
-					img.parent().prepend(imageLabel);
+					img.parent().append(imageLabel);
 					$(targetList).addClass('image-loading').css('visibility','hidden');
 					
 					img.load(function(){
@@ -853,7 +853,7 @@
 					var linkTarget = base.options.new_window ? ' target="_blank"' : '';
 					
 					var imageLink = (base.options.slides[loadSlide].url) ? "href='" + base.options.slides[loadSlide].url + "'" : "";	// If link exists, build it
-					var imageLabel = (api.getField('label')) ? api.getField('label'): "";
+			    	var imageLabel = (base.options.slides[loadSlide].label) ? base.options.slides[loadSlide].label : "";
 					var img = $('<img src="'+base.options.slides[loadSlide].image+'"/>'); 
 					
 					if (imageLink){
@@ -861,7 +861,7 @@
 					} else {
 						img.appendTo(targetList);
 					}
-					img.parent().prepend(imageLabel);
+					img.parent().append(imageLabel);
 					$(targetList).addClass('image-loading').css('visibility','hidden');
 					
 					img.load(function(){
